@@ -19,8 +19,9 @@ Before you can run the application, you will need to have the following software
 ## Installation
 ### Bin
 ```bash
-wget
-mv /usr/bin
+wget https://github.com/KairaBegudiri/AnimeGirlDownloaderQt/releases/download/test/animegirldownloaderqt
+chmod +x animegirldownloaderqt
+mv animegirldownloaderqt /usr/bin/animegirldownloaderqt
 ```
 ### From Source
 ```bash
