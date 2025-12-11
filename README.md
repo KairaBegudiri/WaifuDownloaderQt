@@ -17,11 +17,9 @@ Before you can run the application, you will need to have the following software
 - Qt5 or Qt6 (for PySide6)
 
 ## Installation
-### Bin
+### Bin - manuel
 ```bash
-wget https://github.com/KairaBegudiri/AnimeGirlDownloaderQt/releases/download/test/animegirldownloaderqt
-chmod +x animegirldownloaderqt
-mv animegirldownloaderqt /usr/bin/animegirldownloaderqt
+bash install.sh
 ```
 ### From Source
 ```bash
