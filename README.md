@@ -3,7 +3,6 @@
 based on [`CatgirlDownloaderQT`](https://github.com/KairaBegudiri/catgirldownloaderqt)
 
 A QT application that downloads images of catgirl based on https://nekos.moe
-<br>Based on [`NyarchLinux/CatGirlDownloader` ](https://github.com/NyarchLinux/CatgirlDownloader)
 
 | Nekos.moe | Waifu.im |
 | --- | --- |
@@ -20,7 +19,13 @@ Before you can run the application, you will need to have the following software
 ## Installation
 ### Bin
 ```bash
+wget
+mv /usr/bin
 ```
 ### From Source
 ```bash
+git clone https://github.com/KairaBegudiri/AnimeGirlDownloaderQt
+cd AnimeGirlDownloaderQt
+pip install -r requirements.txt
+python main.py
 ```
