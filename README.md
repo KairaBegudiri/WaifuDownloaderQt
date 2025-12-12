@@ -1,9 +1,6 @@
 # WaifuDownloaderQt
-
-based on [`CatgirlDownloaderQT`](https://github.com/KairaBegudiri/catgirldownloaderqt), [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/CatgirlDownloader) and [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/WaifuDownloader)
-
-A QT application that downloads images of catgirl based on https://nekos.moe
-
+ A QT application that downloads images of waifus/nekos based on https://waifu.im and https://nekos.moe 
+ 
 | Nekos.moe | Waifu.im |
 | --- | --- |
 | <img width="710" height="837" alt="Screenshot_20251212_151017-1" src="https://github.com/user-attachments/assets/8f2f7201-0a4f-4acd-97e3-0f5bd3a9587d" /> | <img width="712" height="834" alt="Screenshot_20251212_151036-1" src="https://github.com/user-attachments/assets/174118d1-bfe5-4e4d-8790-f931282dbc1a" /> |
@@ -37,3 +34,6 @@ cd WaifuDownloaderQt
 pip install -r requirements.txt
 python main.py
 ```
+
+## About WaifuDownloaderQt
+based on [`CatgirlDownloaderQT`](https://github.com/KairaBegudiri/catgirldownloaderqt), [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/CatgirlDownloader) and [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/WaifuDownloader)
