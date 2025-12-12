@@ -22,7 +22,7 @@ Before you can run the application, you will need to have the following software
 ## Installation
 ### Method 1 (Recommended)
 ```bash
-curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/install.sh
+curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/install.sh | bash
 ```
 
 ### Method 2
