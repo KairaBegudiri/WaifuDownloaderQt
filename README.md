@@ -5,10 +5,7 @@
 | --- | --- |
 | <img width="710" height="837" alt="Screenshot_20251212_151017-1" src="https://github.com/user-attachments/assets/8f2f7201-0a4f-4acd-97e3-0f5bd3a9587d" /> | <img width="712" height="834" alt="Screenshot_20251212_151036-1" src="https://github.com/user-attachments/assets/174118d1-bfe5-4e4d-8790-f931282dbc1a" /> |
 
-
-
-### Prerequisites
-Before you can run the application, you will need to have the following software installed:
+### Requirements
 
 - Python 3.x+
 - Git
