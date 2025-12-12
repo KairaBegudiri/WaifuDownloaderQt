@@ -17,22 +17,17 @@ Before you can run the application, you will need to have the following software
 - Git (for cloning the repository)
 - Qt5 or Qt6 (for PySide6)
 - Linux (Kernel 5.15+)
+- bash
 
 ## Installation
 ### Method 1 (Recommended)
 ```bash
-bash install.sh
+curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/install.sh
 ```
+
 ### Method 2
 ```bash
-#!/bin/bash
-mkdir /tmp/waifudownloaderqt && cd /tmp/waifudownloaderqt
-
-wget https://github.com/KairaBegudiri/WaifuDownloaderQt/releases/download/v1.5.0/waifudownloaderqt
-chmod +x waifudownloaderqt
-sudo mv waifudownloaderqt /usr/bin/waifudownloaderqt
-cd $HOME
-rm -rf /tmp/waifudownloaderqt
+bash install.sh
 ```
 
 ### Method 3: From Source
