@@ -5,8 +5,15 @@ from PySide6.QtWidgets import (
     QLabel, QPushButton, QCheckBox, QProgressBar, QFileDialog,
     QMessageBox, QFrame, QStyle, QComboBox
 )
-from PySide6.QtGui import QPixmap, QFont
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtGui import QPixmap, QFont, QIcon
+from PySide6.QtCore import Qt, QThread, Signal, Slot, QSize
+import sys
+import os
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 API_SOURCES = {
     "Nekos.moe (Default)": {
@@ -23,7 +30,7 @@ API_SOURCES = {
     }
 }
 
-APP_TITLE = "AnimeGirlDownloaderQt"
+APP_TITLE = "WaifuDownloaderQt"
 
 COLOR_BACKGROUND_DARK = "#1E1E2E"
 COLOR_CONTAINER = "#181825"
@@ -45,62 +52,67 @@ class ImageFetcherWorker(QThread):
     def run(self):
         api_url = self.api_config["api_url"]
         base_url = self.api_config["base_url"]
-        path = self.api_config["path"]
+        path_keys = self.api_config["path"]
 
-        try:
-            params = {}
-            target_url = api_url
+        with requests.Session() as session:
+            session.headers.update({'User-Agent': 'MultiSourceNekoViewer (PySide6) v3.1'})
 
-            if "nekos.moe" in api_url:
-                params = {"nsfw": "true" if self.nsfw_enabled else "false"}
-            elif "waifu.im" in api_url:
-                target_url = f"{api_url}{str(self.nsfw_enabled).lower()}"
-
-            headers = {'User-Agent': 'MultiSourceNekoViewer (PySide6) v3.0'}
-
-            response = requests.get(target_url, params=params, headers=headers, timeout=10)
-            response.raise_for_status()
-            data = response.json()
-
-            image_source = data
             try:
-                for key in path:
-                    image_source = image_source[key]
+                params = {}
+                target_url = api_url
 
-                if base_url:
-                    image_url = f"{base_url}{image_source}"
-                else:
-                    image_url = image_source
+                if "nekos.moe" in api_url:
+                    params = {"nsfw": "true" if self.nsfw_enabled else "false"}
+                elif "waifu.im" in api_url:
+                    target_url = f"{api_url}{str(self.nsfw_enabled).lower()}"
 
-            except (KeyError, IndexError, TypeError):
-                self.operation_error.emit("API response structure is unexpected or image path not found.")
-                return
+                response = session.get(target_url, params=params, timeout=10)
+                response.raise_for_status()
+                data = response.json()
 
-            if not image_url or not image_url.startswith('http'):
-                self.operation_error.emit("A valid image URL could not be obtained.")
-                return
+                current_node = data
+                try:
+                    for key in path_keys:
+                        current_node = current_node[key]
 
-            img_response = requests.get(image_url, headers=headers, timeout=15)
-            img_response.raise_for_status()
+                    image_endpoint = current_node
 
-            self.image_ready.emit(img_response.content)
+                    if base_url:
+                        final_image_url = f"{base_url}{image_endpoint}"
+                    else:
+                        final_image_url = image_endpoint
 
-        except requests.exceptions.Timeout:
-            self.operation_error.emit("Request timed out. Check your network connection.")
-        except requests.exceptions.RequestException as e:
-            self.operation_error.emit(f"Network Error: {e.__class__.__name__} - URL: {target_url}")
-        except Exception as e:
-            self.operation_error.emit(f"Unexpected Critical Error: {str(e)}")
+                except (KeyError, IndexError, TypeError):
+                    self.operation_error.emit("API response structure changed or path invalid.")
+                    return
+
+                if not final_image_url or not final_image_url.startswith('http'):
+                    self.operation_error.emit("Invalid image URL retrieved.")
+                    return
+
+                img_response = session.get(final_image_url, timeout=15)
+                img_response.raise_for_status()
+
+                self.image_ready.emit(img_response.content)
+
+            except requests.exceptions.Timeout:
+                self.operation_error.emit("Request timed out. Please check your connection.")
+            except requests.exceptions.RequestException as e:
+                self.operation_error.emit(f"Network Error: {e}")
+            except Exception as e:
+                self.operation_error.emit(f"Unexpected Error: {str(e)}")
 
 class NekoViewer(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(APP_TITLE)
+        self.setWindowIcon(QIcon(resource_path("moe.nyarchlinux.waifudownloader.png")))
         self.setMinimumSize(450, 550)
         self.resize(700, 800)
 
         self.current_pixmap = None
         self.worker = None
+        self.last_size = None
 
         self.init_ui()
         self.apply_styles()
@@ -113,13 +125,10 @@ class NekoViewer(QWidget):
         selection_layout = QHBoxLayout()
         self.api_selector = QComboBox()
         self.api_selector.setFont(QFont("Sans-Serif", 10, QFont.Bold))
-
-        for name in API_SOURCES:
-            self.api_selector.addItem(name)
+        self.api_selector.addItems(API_SOURCES.keys())
 
         selection_layout.addWidget(QLabel("Image Source:"))
         selection_layout.addWidget(self.api_selector, 1)
-
         main_layout.addLayout(selection_layout)
 
         self.image_frame = QFrame()
@@ -150,7 +159,6 @@ class NekoViewer(QWidget):
 
         status_bar_layout.addWidget(self.status_label, 1)
         status_bar_layout.addWidget(self.progress_bar)
-
         main_layout.addLayout(status_bar_layout)
 
         control_layout = QHBoxLayout()
@@ -176,34 +184,33 @@ class NekoViewer(QWidget):
 
         control_layout.addWidget(self.refresh_button)
         control_layout.addWidget(self.download_button)
-
         main_layout.addLayout(control_layout)
 
         self.refresh_button.clicked.connect(self.start_loading_image)
         self.download_button.clicked.connect(self.save_image)
         self.api_selector.currentIndexChanged.connect(self.update_source_info)
-
-        self.update_source_info()
         self.nsfw_checkbox.stateChanged.connect(self.update_source_info)
 
+        self.update_source_info()
 
+    @Slot()
     def update_source_info(self):
         selected_name = self.api_selector.currentText()
         config = API_SOURCES.get(selected_name)
 
         has_nsfw_support = selected_name in ["Nekos.moe (Default)", "Waifu.im"]
 
-        self.nsfw_checkbox.setDisabled(not has_nsfw_support)
+        self.nsfw_checkbox.setEnabled(has_nsfw_support)
         if not has_nsfw_support:
             self.nsfw_checkbox.setChecked(False)
 
         notes = config.get("notes", "No additional info.")
-
         self.image_label.setText(
             f"Click 'Refresh Image' to load a new image.\nSource: {selected_name}\n({notes})"
         )
         self.image_label.setStyleSheet(f"QLabel#image_label {{ border: 3px dashed {COLOR_SUBTLE}; color: {COLOR_SUBTLE}; background-color: {COLOR_CONTAINER}; }}")
-
+        self.current_pixmap = None
+        self.download_button.setDisabled(True)
 
     def apply_styles(self):
         self.setStyleSheet(f"""
@@ -229,9 +236,7 @@ class NekoViewer(QWidget):
                 background-color: {COLOR_CONTAINER};
                 color: {COLOR_TEXT_PRIMARY};
             }}
-            QComboBox::drop-down {{
-                border: none;
-            }}
+            QComboBox::drop-down {{ border: none; }}
             QComboBox QAbstractItemView {{
                 border: 1px solid {COLOR_ACCENT_PURPLE};
                 background-color: {COLOR_CONTAINER};
@@ -247,16 +252,9 @@ class NekoViewer(QWidget):
                 border-radius: 8px;
                 padding: 6px 15px;
                 border: none;
-                transition: all 0.2s;
             }}
-
-            QPushButton:hover {{
-                opacity: 0.9;
-            }}
-
-            QPushButton:pressed {{
-                padding-top: 8px;
-            }}
+            QPushButton:hover {{ opacity: 0.9; }}
+            QPushButton:pressed {{ padding-top: 8px; }}
 
             QPushButton#refreshButton {{
                 background-color: {COLOR_ACCENT_PURPLE};
@@ -301,7 +299,7 @@ class NekoViewer(QWidget):
         """)
         self.image_label.setObjectName("image_label")
 
-
+    @Slot()
     def start_loading_image(self):
         selected_name = self.api_selector.currentText()
         api_config = API_SOURCES.get(selected_name)
@@ -310,14 +308,18 @@ class NekoViewer(QWidget):
             self.on_error("Selected API source not found.")
             return
 
-        if self.worker is not None and self.worker.isRunning():
-            self.worker.terminate()
-            self.worker.wait()
+        if self.worker is not None:
+            if self.worker.isRunning():
+                self.worker.disconnect()
+                self.worker.terminate()
+                self.worker.wait()
+            self.worker.deleteLater()
+            self.worker = None
 
         self.refresh_button.setDisabled(True)
         self.download_button.setDisabled(True)
         self.api_selector.setDisabled(True)
-        self.status_label.setText(f"Downloading image from '{selected_name}', please wait...")
+        self.status_label.setText(f"Downloading from '{selected_name}'...")
         self.image_label.setText("Loading...")
         self.image_label.setStyleSheet(f"QLabel#image_label {{ border: 3px dashed {COLOR_ACCENT_PURPLE}; color: {COLOR_ACCENT_PURPLE}; }}")
 
@@ -328,6 +330,7 @@ class NekoViewer(QWidget):
         self.worker.operation_error.connect(self.on_error)
         self.worker.start()
 
+    @Slot(bytes)
     def on_image_loaded(self, image_data):
         self.reset_ui_state("Image loaded successfully.")
 
@@ -337,16 +340,16 @@ class NekoViewer(QWidget):
         if not pixmap.isNull():
             self.current_pixmap = pixmap
             self.image_label.setStyleSheet(f"QLabel#image_label {{ border: none; background-color: {COLOR_CONTAINER}; }}")
-            self.update_scaled_image()
+            self.update_scaled_image(force=True)
             self.download_button.setDisabled(False)
         else:
             self.on_error("Image data is corrupt or unreadable.")
 
+    @Slot(str)
     def on_error(self, error_msg):
         self.reset_ui_state(f"ERROR: {error_msg}", is_error=True)
         self.image_label.setText("Loading Failed!")
         self.image_label.setStyleSheet(f"QLabel#image_label {{ border: 3px dashed #F38BA8; color: #F38BA8; }}")
-
         QMessageBox.critical(self, "Critical Error", error_msg)
 
     def reset_ui_state(self, status_message, is_error=False):
@@ -356,33 +359,42 @@ class NekoViewer(QWidget):
         self.progress_bar.setValue(100)
 
         self.status_label.setText(status_message)
-        if is_error:
-            self.status_label.setStyleSheet("color: #F38BA8; font-style: normal; font-weight: bold;")
-        else:
-            self.status_label.setStyleSheet(f"color: {COLOR_SUBTLE}; font-style: italic;")
+        color = "#F38BA8" if is_error else COLOR_SUBTLE
+        font_style = "normal; font-weight: bold;" if is_error else "italic;"
+        self.status_label.setStyleSheet(f"color: {color}; font-style: {font_style}")
 
-    def update_scaled_image(self):
-        if self.current_pixmap:
-            label_size = self.image_label.size()
+    def update_scaled_image(self, force=False):
+        if not self.current_pixmap:
+            return
 
-            scaled = self.current_pixmap.scaled(
-                label_size,
-                Qt.KeepAspectRatio,
-                Qt.SmoothTransformation
-            )
-            self.image_label.setPixmap(scaled)
+        current_size = self.image_label.size()
+
+        if not force and self.last_size == current_size:
+            return
+
+        self.last_size = current_size
+
+        scaled = self.current_pixmap.scaled(
+            current_size,
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
+        )
+        self.image_label.setPixmap(scaled)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        if self.current_pixmap:
-            self.update_scaled_image()
+        self.update_scaled_image()
 
     def closeEvent(self, event):
-        if self.worker is not None and self.worker.isRunning():
-            self.worker.terminate()
-            self.worker.wait()
+        if self.worker is not None:
+            if self.worker.isRunning():
+                self.worker.disconnect()
+                self.worker.terminate()
+                self.worker.wait()
+            self.worker.deleteLater()
         event.accept()
 
+    @Slot()
     def save_image(self):
         if not self.current_pixmap:
             return
@@ -396,13 +408,12 @@ class NekoViewer(QWidget):
 
         if file_path:
             if self.current_pixmap.save(file_path):
-                QMessageBox.information(self, "Success", f"Image successfully saved to '{file_path}'.")
+                QMessageBox.information(self, "Success", f"Saved to '{file_path}'.")
             else:
-                QMessageBox.warning(self, "Save Error", "An error occurred while saving the image.")
+                QMessageBox.warning(self, "Save Error", "Could not save the image.")
 
 if __name__ == "__main__":
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-
     app = QApplication(sys.argv)
     window = NekoViewer()
     window.show()
