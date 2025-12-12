@@ -1,12 +1,19 @@
 #!/bin/bash
-mkdir /tmp/waifudownloaderqt && cd /tmp/waifudownloaderqt
+set -e
 
-wget https://github.com/KairaBegudiri/WaifuDownloaderQt/releases/download/v1.5.0/waifudownloaderqt
-chmod +x waifudownloaderqt
+TMPDIR=$(mktemp -d)
 
-sudo mv waifudownloaderqt /usr/bin/waifudownloaderqt
+wget -O "$TMPDIR/waifudownloaderqt" \
+  https://github.com/KairaBegudiri/WaifuDownloaderQt/releases/download/v1.5.0/waifudownloaderqt
+chmod +x "$TMPDIR/waifudownloaderqt"
+sudo mv "$TMPDIR/waifudownloaderqt" /usr/bin/waifudownloaderqt
 
-cd $HOME
+mkdir -p ~/.local/share/applications
+wget -O ~/.local/share/applications/waifudownloaderqt.desktop \
+  https://github.com/KairaBegudiri/WaifuDownloaderQt/releases/download/v1.5.0/waifudownloaderqt.desktop
 
-echo "Cleaning"
-rm -rf /tmp/waifudownloaderqt
+mkdir -p ~/.local/share/icons
+wget -O ~/.local/share/icons/moe.nyarchlinux.waifudownloader.png \
+  https://raw.githubusercontent.com/NyarchLinux/WaifuDownloader/master/data/icons/moe.nyarchlinux.waifudownloader.png
+
+rm -rf "$TMPDIR"
