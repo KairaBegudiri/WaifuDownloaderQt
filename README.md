@@ -11,10 +11,11 @@
 Before you can run the application, you will need to have the following software installed:
 
 - Python 3.x+
-- Git (for cloning the repository)
-- Qt5 or Qt6 (for PySide6)
+- Git
+- Qt5 or Qt6
 - Linux (Kernel 5.15+)
 - bash
+- Desktop (KDE, LXQT or COSMIC)
 
 ## Installation
 ### Method 1 (Recommended)
