@@ -10,9 +10,9 @@
 - Python 3.x+
 - Git
 - Qt5 or Qt6
-- Linux (Kernel 5.15+)
 - bash
-- Desktop (KDE, LXQT or COSMIC)
+- Desktop (KDE or LXQT)
+- curl
 
 ## Installation
 ### Method 1 (Recommended)
@@ -39,4 +39,17 @@ curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/u
 ```
 
 ## About WaifuDownloaderQt
-based on [`CatgirlDownloaderQT`](https://github.com/KairaBegudiri/catgirldownloaderqt), [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/CatgirlDownloader) and [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/WaifuDownloader)
+based on 
+* [`CatgirlDownloaderQT`](https://github.com/KairaBegudiri/catgirldownloaderqt)
+* [`NyarchLinux/CatgirlDownloader`](https://github.com/NyarchLinux/CatgirlDownloader)
+* [`NyarchLinux/WaifuDownloader`](https://github.com/NyarchLinux/WaifuDownloader)
+
+## Star History
+
+<a href="https://github.com/KairaBegudiri/WaifuDownloaderQt/stargazers">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=KairaBegudiri/WaifuDownloaderQt&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=KairaBegudiri/WaifuDownloaderQt&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=KairaBegudiri/WaifuDownloaderQt&type=Date" />
+ </picture>
+</a>
