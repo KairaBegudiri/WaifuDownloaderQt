@@ -17,7 +17,7 @@
 ## Installation
 ### Method 1 (Fedora only)
 ```bash
-sudo dnf install 
+sudo dnf install https://github.com/KairaBegudiri/WaifuDownloaderQt/releases/download/v1.5.0/waifudownloaderqt-1.5.0-1.fc43.x86_64.rpm
 ```
 
 ### Method 2 (Recommended)
