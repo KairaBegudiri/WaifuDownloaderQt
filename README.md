@@ -15,33 +15,7 @@
 - curl
 
 ## Installation
-### Method 1 (Fedora only)
-```bash
-sudo dnf install https://github.com/KairaBegudiri/WaifuDownloaderQt/releases/download/v1.5.0/waifudownloaderqt-1.5.0-1.fc43.x86_64.rpm
-```
-
-### Method 2 (Recommended)
-```bash
-curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/install.sh | bash
-```
-
-### Method 3
-```bash
-bash install.sh
-```
-
-### Method 3: From Source
-```bash
-git clone https://github.com/KairaBegudiri/WaifuDownloaderQt
-cd WaifuDownloaderQt
-pip install -r requirements.txt
-python main.py
-```
-
-## Uninstall
-```bash
-curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/uninstall.sh | bash
-```
+[Here is installation document /wiki](https://github.com/KairaBegudiri/WaifuDownloaderQt/wiki/Installation)
 
 ## About WaifuDownloaderQt
 based on 
