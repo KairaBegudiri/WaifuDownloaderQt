@@ -15,12 +15,17 @@
 - curl
 
 ## Installation
-### Method 1 (Recommended)
+### Method 1 (Fedora only)
+```bash
+sudo dnf install 
+```
+
+### Method 2 (Recommended)
 ```bash
 curl -L https://raw.githubusercontent.com/KairaBegudiri/WaifuDownloaderQt/main/install.sh | bash
 ```
 
-### Method 2
+### Method 3
 ```bash
 bash install.sh
 ```
