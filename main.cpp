@@ -21,8 +21,6 @@
 
 using json = nlohmann::json;
 
-// ---------- HTTP helpers ----------
-
 static size_t write_cb(char *ptr, size_t size, size_t nmemb, void *userdata) {
     auto *buf = static_cast<std::vector<char>*>(userdata);
     buf->insert(buf->end(), ptr, ptr + size * nmemb);
@@ -45,14 +43,11 @@ static std::vector<char> http_get(const std::string &url) {
     return buf;
 }
 
-// ---------- Source config ----------
-
 struct Source {
     const char *name;
-    const char *api_url;       // base API endpoint
-    const char *nsfw_param;    // "param" → ?nsfw=true, "inline" → append to url
-    const char *base_url;      // prepend to extracted id, "" if url is complete
-    // JSON path to image id/url: two keys (string then int index)
+    const char *api_url;      
+    const char *nsfw_param;  
+    const char *base_url;     
     const char *key1;
     int         idx;
     const char *key2;
@@ -69,8 +64,6 @@ static const Source SOURCES[] = {
       "images", 0, "url" },
 };
 static const int N_SOURCES = sizeof(SOURCES) / sizeof(SOURCES[0]);
-
-// ---------- Worker thread ----------
 
 class Worker : public QThread {
     Q_OBJECT
@@ -115,8 +108,6 @@ private:
     bool   m_nsfw;
 };
 
-// ---------- Main window ----------
-
 class App : public QWidget {
     Q_OBJECT
 public:
@@ -129,7 +120,6 @@ public:
         lo->setContentsMargins(15, 15, 15, 15);
         lo->setSpacing(10);
 
-        // Source row
         auto *row1 = new QHBoxLayout;
         m_src = new QComboBox;
         for (int i = 0; i < N_SOURCES; ++i)
@@ -138,7 +128,6 @@ public:
         row1->addWidget(m_src, 1);
         lo->addLayout(row1);
 
-        // Image frame
         auto *frame = new QFrame;
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setMinimumHeight(450);
@@ -149,7 +138,6 @@ public:
         flo->addWidget(m_img);
         lo->addWidget(frame, 1);
 
-        // Status row
         auto *row2 = new QHBoxLayout;
         m_status = new QLabel("Ready.");
         m_pbar = new QProgressBar;
@@ -160,7 +148,6 @@ public:
         row2->addWidget(m_pbar);
         lo->addLayout(row2);
 
-        // Control row
         auto *row3 = new QHBoxLayout;
         m_nsfw = new QCheckBox("Allow NSFW");
         m_ref = new QPushButton(style()->standardIcon(QStyle::SP_BrowserReload),    "Refresh");
@@ -260,8 +247,6 @@ private:
     QPixmap      m_px;
     Worker      *m_worker;
 };
-
-// ---------- Entry ----------
 
 int main(int argc, char *argv[]) {
     QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
