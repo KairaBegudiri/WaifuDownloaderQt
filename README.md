@@ -3,19 +3,22 @@
  
 | Nekos.moe | Waifu.im |
 | --- | --- |
-| <img width="710" height="837" alt="Screenshot_20251212_151017-1" src="https://github.com/user-attachments/assets/8f2f7201-0a4f-4acd-97e3-0f5bd3a9587d" /> | <img width="712" height="834" alt="Screenshot_20251212_151036-1" src="https://github.com/user-attachments/assets/174118d1-bfe5-4e4d-8790-f931282dbc1a" /> |
+| <img width="993" height="811" alt="image" src="https://github.com/user-attachments/assets/17041000-a6fe-40f8-b0db-9cb0ee022744" /> | <img width="995" height="812" alt="image" src="https://github.com/user-attachments/assets/eacf28d2-7437-47db-8831-c185ecba1857" /> |
+
 
 ### Requirements
 
-- Python 3.x+
-- Git
-- Qt5 or Qt6
-- bash
-- Desktop (KDE or LXQT)
-- curl
+* qt6-base-dev 
+* libcurl4-openssl-dev 
+* cmake
 
-## Installation
-[Here is installation document /wiki](https://github.com/KairaBegudiri/WaifuDownloaderQt/wiki/Installation)
+### Build
+```bash
+mkdir build && cd build
+cmake ..
+make
+./waifudownloader
+```
 
 ## About WaifuDownloaderQt
 based on 
