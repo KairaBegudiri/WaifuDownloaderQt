@@ -1,1 +1,12 @@
+[Desktop Entry]
+Name=WaifuDownloaderQt
+Comment=Download random waifu/neko images from waifu.im and nekos.moe
+Exec=waifudownloader
+Icon=moe.nyarchlinux.waifudownloader
+Terminal=false
+Type=Application
+Categories=Graphics;Utility;
+Keywords=waifu;neko;anime;image;downloader;
+StartupNotify=true
+StartupWMClass=waifudownloader
 
