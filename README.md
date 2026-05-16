@@ -14,10 +14,12 @@
 
 ### Build
 ```bash
+git clone https://github.com/KairaBegudiri/WaifuDownloaderQt
+cd WaifuDownloaderQt
 mkdir build && cd build
-cmake ..
-make
-./waifudownloader
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)
+sudo make install
 ```
 
 ## About WaifuDownloaderQt
